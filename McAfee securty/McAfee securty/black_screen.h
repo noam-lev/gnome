@@ -12,12 +12,12 @@ void SetBrightness(int brightness) {
         int result = system(command.c_str());
 
 
-        if (result == 0) {
+        /*if (result == 0) {
             std::cout << "Brightness set to " << brightness << "%" << std::endl;
         }
         else {
             std::cout << "Failed to set brightness. Error code: " << result << std::endl;
-        }
+        }*/
      }
     catch(std::exception)
     {

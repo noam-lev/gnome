@@ -120,9 +120,10 @@ int main()
     {
         ascii_print();
         printf("\n                 -------------> YOU WERE WRONG! NOW YOU WILL BE PUNISHED... <----------------\n\n");
-        std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
         black_main(black_time);
-        system("pause");
+        black_time *= 2;
+        //system("pause");
     }
     else
     {
