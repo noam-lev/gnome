@@ -1,0 +1,3 @@
+﻿  main.cpp
+C:\Users\koma2\Documents\gnome\McAfee securty\McAfee securty\main.cpp(25,95): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
+  McAfee securty.vcxproj -> C:\Users\koma2\Documents\gnome\McAfee securty\x64\Debug\McAfee securty.exe
