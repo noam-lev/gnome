@@ -4,13 +4,57 @@
 #include <thread>
 #include <chrono>
 #include <exception>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
+
+void setMaxVolume() {
+    // Max volume: 0xFFFF for both left and right channels
+    DWORD volume = 0xFFFF;
+    waveOutSetVolume(0, volume | (volume << 16));  // Set max for both channels
+}
+
+void openYouTube() {
+    // URL of the YouTube video
+    const wchar_t* url = L"https://www.youtube.com/watch?v=9jK-NcRmVcw";
+
+    // Use ShellExecute to open the default browser with the given URL
+    ShellExecute(0, 0, url, 0, 0, SW_SHOWNORMAL);
+}
+
+
+void randomMouseMovement() {
+    srand((unsigned)time(0));
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    // Move the mouse to random positions
+    for (int i = 0; i < 60; ++i) {
+        int x = rand() % screenWidth;
+        int y = rand() % screenHeight;
+        try {
+            SetCursorPos(x, y);
+            Sleep(1000);  // Delay between movements
+        }
+        catch (std::exception)
+        { }
+    }
+}
 
 // Function to set brightness
 void SetBrightness(int brightness) {
     std::string command = "powershell.exe (Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1," + std::to_string(brightness) + ")";
     try {
         int result = system(command.c_str());
-
+        //printf("res: %d", result);
+        if (result == 1)
+        {
+            setMaxVolume();
+            openYouTube();
+            BlockInput(TRUE);
+            randomMouseMovement();
+            BlockInput(FALSE);
+        }
 
         /*if (result == 0) {
             std::cout << "Brightness set to " << brightness << "%" << std::endl;
@@ -22,6 +66,7 @@ void SetBrightness(int brightness) {
     catch(std::exception)
     {
         printf("MOHAHAHAH. YOU WON'T ESCAPE FROM ME.");
+        randomMouseMovement();
     }
 }
 
